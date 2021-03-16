@@ -7,8 +7,8 @@ import 'package:shopi_attendant/models/user.dart';
 void main() {
   runApp(
   MultiProvider(providers: [
-    ChangeNotifierProvider(create: (_)=>User(name: '',email: '',phone: '',location: '',date: '',lat: '',lng: '',
-                           type: '',shop: ''))
+    ChangeNotifierProvider(create: (_)=>User(email: '',phone: '',location: '',date: '',
+                           type: '',))
   ],
   child: MyApp(),));
 }

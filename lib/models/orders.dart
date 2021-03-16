@@ -3,32 +3,41 @@ class Orders{
   int id;
   String order_id;
   String order_date;
-  List<Service> services;
+  List<Job> jobs;
   String status;
+  String time;
+  String employee_name;
+  double amount;
 
-  Orders({this.order_id,this.order_date,this.services,this.status});
+  Orders({this.order_id,this.order_date,this.jobs,this.status,this.employee_name,this.time,this.amount});
 
   Map<String,dynamic> toJson()=>{
-    'order_id':this.order_id,
-    'order_date':this.order_date,
+    'order':this.order_id,
+    'date':this.order_date,
+    'agent':this.employee_name,
+    'time':this.time,
+    'amount':this.amount.toString(),
     'status':this.status,
-    'services':List<dynamic>.from(services.map((x)=>x.toJson()))
+    'jobs':List<dynamic>.from(jobs.map((x)=>x.toJson()))
   };
 
   factory Orders.fromJson(Map<String,dynamic> parsedJson){
-    List<Service> user_services;
-    if(parsedJson["services"]!=null){
-      user_services=parsedJson["services"].map((x)=> Orders.fromJson(x));
+    List<Job> user_services;
+    if(parsedJson["jobs"]!=null){
+      user_services=List<Job>.from(parsedJson["jobs"].map((x)=> Job.fromJson(x))).toList();
     }
 
     else{
       user_services=[];
     }
     return Orders(
-      order_id: parsedJson['orders_id'],
-      order_date: parsedJson['order_date'],
+      order_id: parsedJson['order'],
+      order_date: parsedJson['date'],
+      employee_name:parsedJson['agent'],
       status: parsedJson['status'],
-      services: user_services
+      time: parsedJson['time'],
+      amount: double.parse(parsedJson['amount']),
+      jobs: user_services
     );
   }
 }

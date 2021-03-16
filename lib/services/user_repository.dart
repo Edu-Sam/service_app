@@ -21,8 +21,8 @@ class UserRepository{
     );
 
     var jsonUsers=jsonDecode(response.body);
-    var usersMap=jsonUsers["userdata"] as List;
-    List<User> user_list=usersMap.map<User>((x) => User.fromJson(x)).toList();
+   /* var usersMap=jsonUsers["userdata"] as List;*/
+    List<User> user_list=jsonUsers["userdata"].map<User>((x) => User.fromJson(x));
 
     return user_list;
   }

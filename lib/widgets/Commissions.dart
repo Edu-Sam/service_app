@@ -45,6 +45,7 @@ class CommissionState extends State<Commissions>  with TickerProviderStateMixin 
             padding: EdgeInsets.symmetric(vertical: 20.0,horizontal: 10.0),
             child: AnimatedContainer(
               duration: Duration(milliseconds: 500),
+              curve: Curves.bounceInOut,
               width: MediaQuery.of(context).size.width,
               height: commission_expanded ?
               MediaQuery.of(context).size.height * 3/4 :
@@ -156,10 +157,10 @@ class CommissionState extends State<Commissions>  with TickerProviderStateMixin 
                           ),
                           Padding(
                             padding: EdgeInsets.symmetric(vertical: 0.0,horizontal: 0.0),
-                            child: AnimatedContainer(
-                              duration: Duration(milliseconds: 500),
+                            child: Container(
+                         //     duration: Duration(milliseconds: 500),
                               width: MediaQuery.of(context).size.width,
-                              height: commission_expanded ?  MediaQuery.of(context).size.height * 1/2 : 0,
+                              height: commission_expanded ?  MediaQuery.of(context).size.height * .5 : 0,
                               child: Column(
                                 children: [
                                   Padding(

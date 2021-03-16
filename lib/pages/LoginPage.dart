@@ -147,6 +147,11 @@ class LoginPageState extends State<LoginPage>{
                               },
                             ),
                           ),
+                          error_message.length > 0 ?
+                          Padding(
+                            padding: EdgeInsets.symmetric(),
+                            child: Text(error_message,style: TextStyle(color: Colors.red.shade900),),
+                          ): Container(),
                           Padding(
                             padding: EdgeInsets.symmetric(vertical: 10.0,horizontal: 20.0),
                             child: Container(
@@ -154,16 +159,18 @@ class LoginPageState extends State<LoginPage>{
                               height: 40,
                               child: TextButton(onPressed:(){
                                 Navigator.push(context,MaterialPageRoute(builder: (context)=>Dashboard()));
-                                    /*if(!_regissterFormKey.currentState.validate()){
+                                  /*  if(!_regissterFormKey.currentState.validate()){
                                       email=emailController.text;
                                       password=passwordController.text;
                                        getUser(email, password).then((value){
                                          if(value.length > 0){
+                                           error_message='';
                                            Navigator.push(context,MaterialPageRoute(builder: (context)=>Dashboard()));
                                          }
                                          else{
                                            setState(() {
-                                             error_message="The account does not exist";
+                                             print("Incorrect username or password");
+                                             error_message="Incorrect username or password";
                                            });
                                          }
                                        });

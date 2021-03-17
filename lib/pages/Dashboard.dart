@@ -3,6 +3,8 @@ import "package:shopi_attendant/widgets/ColouredTabBar.dart";
 import "package:shopi_attendant/widgets/Commissions.dart";
 import "package:shopi_attendant/services/order_repository.dart";
 import "package:shopi_attendant/models/orders.dart";
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:shopi_attendant/widgets/SalesSummary.dart';
 
 class Dashboard extends StatefulWidget{
   Dashboard({Key key}):super(key:key);
@@ -16,6 +18,7 @@ class DashboardState extends State<Dashboard> with SingleTickerProviderStateMixi
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   OrderRepository orderRepository=new OrderRepository();
   Future<List<Orders>> future_orders;
+  Future<String> future_update_service;
 
   @override
   void initState() {
@@ -205,7 +208,12 @@ class DashboardState extends State<Dashboard> with SingleTickerProviderStateMixi
               ),
             )
           ),
-          Container(),
+          Container(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height,
+            color: Colors.grey.shade100,
+            child: SalesSummary(),
+          ),
           Container(
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height,
@@ -247,6 +255,7 @@ class DashboardState extends State<Dashboard> with SingleTickerProviderStateMixi
    ),isScrollControlled: true,
        builder: (BuildContext context){
      //return Container();
+      //   future_update_service=null;
          return StatefulBuilder(builder: (BuildContext context,updateState){
            return  Container(
                width: MediaQuery.of(context).size.width,
@@ -304,15 +313,67 @@ class DashboardState extends State<Dashboard> with SingleTickerProviderStateMixi
 
                                    title: Text(orders.jobs.elementAt(index).service_name,style: TextStyle(color: Theme.of(context).primaryColor),),
                                    subtitle: Text("average time:  1hr 50 minutes",style: TextStyle(color: Colors.black54),),
-                                   trailing: TextButton(
-                                     onPressed: (){},
-                                     child: Text("Complete",style: TextStyle(color: Colors.white),),
-                                     style: TextButton.styleFrom(
-                                       primary: Theme.of(context).primaryColor,
-                                       backgroundColor: Theme.of(context).primaryColor,
-                                       onSurface: Colors.white
-                                     ),
-                                   ),
+                                   /*trailing: FutureBuilder(
+                                     future: future_update_service,
+                                     builder: (context,snapshot){
+                                       if(!snapshot.hasData){
+                                         return TextButton(
+                                           onPressed: (){
+                                             updateState(() {
+                                               future_update_service=this.updateService("1", orders.jobs.elementAt(index).id.toString());
+                                             });
+                                           },
+                                           child: Text("Complete",style: TextStyle(color: Colors.white),),
+                                           style: TextButton.styleFrom(
+                                               primary: Theme.of(context).primaryColor,
+                                               backgroundColor: Theme.of(context).primaryColor,
+                                               onSurface: Colors.white
+                                           ),
+                                         );
+                                       }
+
+                                       else if(snapshot.connectionState==ConnectionState.done && snapshot.hasData){
+                                         String user_status=snapshot.data;
+                                         if(user_status.contains('OK')){
+                                           return Text("Done");
+                                         }
+
+                                         else if(user_status.contains("FAILED")){
+                                           return Text("Unable to update");
+                                         }
+                                         else{
+                                           return TextButton(
+                                             onPressed: (){
+                                               updateState(() {
+                                                 future_update_service=this.updateService("1", orders.jobs.elementAt(index).id.toString());
+                                               });
+                                             },
+                                             child: Text("Complete",style: TextStyle(color: Colors.white),),
+                                             style: TextButton.styleFrom(
+                                                 primary: Theme.of(context).primaryColor,
+                                                 backgroundColor: Theme.of(context).primaryColor,
+                                                 onSurface: Colors.white
+                                             ),
+                                           );
+                                         }
+
+                                       }
+
+                                       else if(snapshot.connectionState==ConnectionState.waiting){
+                                         return CircularProgressIndicator();
+
+                                       }
+
+                                       else if(snapshot.hasError){
+                                         return Text("Error creating data snapshot");
+                                       }
+
+                                       else{
+                                         return CircularProgressIndicator();
+
+                                       }
+                                     },
+                                   ),*/
                                    onTap: (){
 
                                    }
@@ -329,7 +390,38 @@ class DashboardState extends State<Dashboard> with SingleTickerProviderStateMixi
                                Padding(
                                  padding: EdgeInsets.symmetric(vertical: 0.0,horizontal: 10.0),
                                  child: TextButton(
-                                   onPressed: (){},
+                                   onPressed: (){
+                                  //   print('YES');
+                                     setState(() async{
+                                       await completeOrders("1", orders.order_id).then((value){
+                                         if(value.contains("OK")){
+                                           Fluttertoast.showToast(
+                                               msg: "Order Completed successfully",
+                                               toastLength: Toast.LENGTH_SHORT,
+                                               gravity: ToastGravity.CENTER,
+                                               timeInSecForIosWeb: 1,
+                                               backgroundColor: Colors.black,
+                                               textColor: Theme.of(context).primaryColor,
+                                               fontSize: 16.0
+                                           );
+                                           Navigator.pop(context);
+                                         }
+
+                                         else if(value.contains("FAILED")){
+                                           Fluttertoast.showToast(
+                                               msg: "Error:Could not save order",
+                                               toastLength: Toast.LENGTH_SHORT,
+                                               gravity: ToastGravity.CENTER,
+                                               timeInSecForIosWeb: 1,
+                                               backgroundColor: Colors.black,
+                                               textColor: Colors.red,
+                                               fontSize: 16.0
+                                           );
+
+                                         }
+                                       });
+                                     });
+                                   },
                                    child: Text('Complete All',style: TextStyle(color: Colors.white),),
                                    style: TextButton.styleFrom(
                                      primary: Theme.of(context).primaryColor,
@@ -365,9 +457,62 @@ class DashboardState extends State<Dashboard> with SingleTickerProviderStateMixi
    );
   }
 
+  Future<String> updateService(String status,String id) async{
+    String service_status=await orderRepository.updateService(status,id);
+    return service_status;
+  }
+
   Future<List<Orders>> getOrdersById(String id) async{
     List<Orders> orders=await orderRepository.fetchOrdersById(id);
+    print(orders);
     return orders;
   }
+
+  Future<String> completeOrders(String status,String bill_no) async{
+    String order_status=await orderRepository.completeOrder(status, bill_no);
+    return order_status;
+  }
+
+  /*Widget updateStatusWidget(String status,String id){
+    return FutureBuilder(
+      future: future_update_service,
+      builder: (context,snapshot){
+        if(!snapshot.hasData){
+          return TextButton(
+            onPressed: (){
+              setState(() {
+                future_update_service=this.updateService(status, id);
+              });
+            },
+            child: Text("Complete",style: TextStyle(color: Colors.white),),
+            style: TextButton.styleFrom(
+                primary: Theme.of(context).primaryColor,
+                backgroundColor: Theme.of(context).primaryColor,
+                onSurface: Colors.white
+            ),
+          );
+        }
+
+        else if(snapshot.connectionState==ConnectionState.done && snapshot.hasData){
+          return Text("Done");
+        }
+
+        else if(snapshot.connectionState==ConnectionState.waiting){
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+
+        else if(snapshot.hasError){
+          return Text("Error creating data snapshot");
+        }
+
+        else{
+          return CircularProgressIndicator();
+        }
+      },
+    );
+  }*/
+
 
 }

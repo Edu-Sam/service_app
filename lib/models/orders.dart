@@ -40,4 +40,15 @@ class Orders{
       jobs: user_services
     );
   }
+
+  bool isCompleted(){
+    bool completed_order=true;
+    for(int i=0;i<jobs.length;i++){
+      if(jobs.elementAt(i).status==0){
+        completed_order=false;
+      }
+    }
+
+    return completed_order;
+  }
 }

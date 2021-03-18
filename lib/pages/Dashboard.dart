@@ -22,7 +22,7 @@ class DashboardState extends State<Dashboard> with SingleTickerProviderStateMixi
 
   @override
   void initState() {
-    future_orders=this.getOrdersById('19');
+    future_orders=this.getOrdersById('20','0');
     super.initState();
     tabController=new TabController(length: 3,vsync: this);
   }
@@ -392,34 +392,36 @@ class DashboardState extends State<Dashboard> with SingleTickerProviderStateMixi
                                  child: TextButton(
                                    onPressed: (){
                                   //   print('YES');
-                                     setState(() async{
-                                       await completeOrders("1", orders.order_id).then((value){
-                                         if(value.contains("OK")){
-                                           Fluttertoast.showToast(
-                                               msg: "Order Completed successfully",
-                                               toastLength: Toast.LENGTH_SHORT,
-                                               gravity: ToastGravity.CENTER,
-                                               timeInSecForIosWeb: 1,
-                                               backgroundColor: Colors.black,
-                                               textColor: Theme.of(context).primaryColor,
-                                               fontSize: 16.0
-                                           );
-                                           Navigator.pop(context);
-                                         }
+                                     completeOrders("1", orders.order_id).then((value){
+                                       print("The value is " + value);
+                                       if(value.contains("OK")){
+                                         Fluttertoast.showToast(
+                                             msg: "Order Completed successfully",
+                                             toastLength: Toast.LENGTH_SHORT,
+                                             gravity: ToastGravity.CENTER,
+                                             timeInSecForIosWeb: 1,
+                                             backgroundColor: Colors.black,
+                                             textColor: Theme.of(context).primaryColor,
+                                             fontSize: 16.0
+                                         );
+                                         setState(() {
+                                           future_orders=this.getOrdersById('19','0');
+                                         });
+                                         Navigator.pop(context);
+                                       }
 
-                                         else if(value.contains("FAILED")){
-                                           Fluttertoast.showToast(
-                                               msg: "Error:Could not save order",
-                                               toastLength: Toast.LENGTH_SHORT,
-                                               gravity: ToastGravity.CENTER,
-                                               timeInSecForIosWeb: 1,
-                                               backgroundColor: Colors.black,
-                                               textColor: Colors.red,
-                                               fontSize: 16.0
-                                           );
+                                       else if(value.contains("FAILED")){
+                                         Fluttertoast.showToast(
+                                             msg: "Error:Could not save order",
+                                             toastLength: Toast.LENGTH_SHORT,
+                                             gravity: ToastGravity.CENTER,
+                                             timeInSecForIosWeb: 1,
+                                             backgroundColor: Colors.black,
+                                             textColor: Colors.red,
+                                             fontSize: 16.0
+                                         );
 
-                                         }
-                                       });
+                                       }
                                      });
                                    },
                                    child: Text('Complete All',style: TextStyle(color: Colors.white),),
@@ -462,8 +464,8 @@ class DashboardState extends State<Dashboard> with SingleTickerProviderStateMixi
     return service_status;
   }
 
-  Future<List<Orders>> getOrdersById(String id) async{
-    List<Orders> orders=await orderRepository.fetchOrdersById(id);
+  Future<List<Orders>> getOrdersById(String id,String status) async{
+    List<Orders> orders=await orderRepository.fetchOrdersById(id,status);
     print(orders);
     return orders;
   }

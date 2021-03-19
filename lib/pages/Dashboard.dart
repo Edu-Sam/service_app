@@ -155,13 +155,13 @@ class DashboardState extends State<Dashboard> with SingleTickerProviderStateMixi
                                                   onSurface: Colors.white
                                               ),
                                             ),
-                                            ElevatedButton(onPressed:(){},
+                                            /*ElevatedButton(onPressed:(){},
                                               child: Text("Transfer",style: TextStyle(color: Theme.of(context).primaryColor),),
                                               style: ElevatedButton.styleFrom(
                                                   primary: Colors.yellow,
                                                   onSurface: Colors.white
                                               ),
-                                            )
+                                            )*/
                                           ],
                                         ),
                                       ),
@@ -312,7 +312,8 @@ class DashboardState extends State<Dashboard> with SingleTickerProviderStateMixi
                                  return ListTile(
 
                                    title: Text(orders.jobs.elementAt(index).service_name,style: TextStyle(color: Theme.of(context).primaryColor),),
-                                   subtitle: Text("average time:  1hr 50 minutes",style: TextStyle(color: Colors.black54),),
+                                   subtitle: Text("average time: " + orders.jobs.elementAt(index).hours + " hours "  +
+                                     orders.jobs.elementAt(index).minutes + " minutes ",style: TextStyle(color: Colors.black54),),
                                    /*trailing: FutureBuilder(
                                      future: future_update_service,
                                      builder: (context,snapshot){
@@ -434,7 +435,9 @@ class DashboardState extends State<Dashboard> with SingleTickerProviderStateMixi
                                Padding(
                                  padding: EdgeInsets.symmetric(vertical: 0.0,horizontal: 10.0),
                                  child: OutlinedButton(
-                                   onPressed: (){},
+                                   onPressed: (){
+                                     Navigator.pop(context);
+                                   },
                                    child: Text('Cancel',style: TextStyle(color: Theme.of(context).primaryColor),),
                                    style: TextButton.styleFrom(
                                      primary: Theme.of(context).primaryColor,
